@@ -57,3 +57,12 @@ Newest entries go at the bottom. Each entry names the commit that holds the chan
 **Decision 14. Maestro flows cover what a script can reach.** The Maestro CLI came from its official Homebrew tap (`mobile-dev-inc/tap/maestro`, 2.11.0). The Homebrew `maestro` cask is a different product and was not used. The flows live in `.maestro/`. Picking a file in the system picker is not automated, so the import success path is covered by Jest tests only.
 
 **Note on tests.** Under load, `MarkersScreens`, `SearchScreen` and `VersionsScreen` sometimes fail in the full run, while passing alone. The cause is the iOS build saturating the CPU. `VersionsScreen` now waits up to five seconds. The other two are pre-existing timing-sensitive tests and pass when run on their own.
+
+**Decision 15. The chooser was empty on the device, and a Jest test missed it.** The chooser read the installed list once at render time, so it never updated after loading. The Jest test filled the list by hand before opening it, which hid the bug. The reader now subscribes to the list, so the chooser fills in when it opens. The Maestro chooser flow caught this, and it is the reason to run flows on the real app.
+- Evidence: `app/reader.tsx` (`installedVersions`), `.maestro/versions-chooser.yaml`.
+
+**Decision 16. Maestro flows run on the simulator, all pass.** Four flows: the chooser, Compare, removing the KJV (refused), and a refused http link. Two of them needed fixes in the flow itself. Maestro matches an element's accessibility label, not its visible text, and the keyboard swallowed the first tap on a button. Maestro's own screenshot step did not write files, so the screenshots in `docs/progress/screenshots/` were taken with `simctl`.
+- Screenshots: `versions-screen.png`, `compare-verse.png`, `refuse-http-link.png`. The chooser flow ends on the Versions screen, so no separate chooser shot exists.
+- Full Jest suite on an idle machine: 336 tests pass, type check clean.
+
+**Build note.** The Release build exits with status 1 after it installs and opens the app. The cause is an osascript call that checks for the Simulator window, which fails here. The app is installed and runs, so this does not block testing.
