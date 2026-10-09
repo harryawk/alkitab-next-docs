@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AlkitabNext Migration Roadmap</title>
+<style>
+  :root {
+    --bg:#f7f6f2; --card:#fff; --ink:#1d1d1b; --mute:#6b6a64; --line:#e3e1d9;
+    --master:#2f7d4f; --nav:#2b6cb0; --side:#b7791f; --wip:#c05621; --open:#a0a0a0;
+    --defer:#8a6fb5; --park:#9aa5b1; --todo:#d8d6cd;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#16161a;--card:#202026;--ink:#ecebe6;--mute:#9a998f;--line:#33333b;
+      --master:#4cb87a;--nav:#63a4e8;--side:#e0a640;--wip:#ee8a52;--open:#77777f;--defer:#a98fd6;--park:#6f7a86;--todo:#3a3a43}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+  main{max-width:1040px;margin:0 auto;padding:28px 16px 64px}
+  h1{font-size:26px;margin:0 0 4px}
+  h2{font-size:18px;margin:36px 0 12px}
+  p.sub{color:var(--mute);margin:0 0 20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .grid{display:grid;gap:12px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .stat b{font-size:28px;display:block}
+  .stat span{color:var(--mute);font-size:13px}
+  .bar{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--todo)}
+  .bar i{display:block;height:100%}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:13px;color:var(--mute)}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c);vertical-align:-1px}
+  .phase{margin-bottom:12px}
+  .phase header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:baseline}
+  .phase h3{margin:0;font-size:16px}
+  .tag{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--c);color:var(--c);white-space:nowrap}
+  .phase p{margin:6px 0 10px;color:var(--mute);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;padding:3px 8px;border-radius:5px;background:color-mix(in srgb,var(--c) 16%,transparent);border-left:3px solid var(--c)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .scroll{overflow-x:auto}
+  code{font:12.5px ui-monospace,Menlo,monospace;background:color-mix(in srgb,var(--mute) 14%,transparent);padding:1px 5px;border-radius:4px}
+  .path{display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border:0}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--nav);color:#fff;font-size:12px;display:grid;place-items:center;font-weight:700}
+  .step b{display:block}
+  .step span{color:var(--mute);font-size:14px}
+  .risk li{margin:4px 0}
+  footer{margin-top:36px;color:var(--mute);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <h1>AlkitabNext: migration of yukuku/androidbible</h1>
+  <p class="sub">Snapshot 2026-10-09. Sources: <code>git</code> (all local branches and 8 agent worktrees), <code>.scratch/</code> specs, tickets and decisions, <code>docs/progress/2026-10-09-migration-progress.md</code>. Goal (ADR 0001): <b>Parity</b> with Upstream on iOS, Android and web.</p>
+
+  <section class="grid g4">
+    <div class="card stat"><b>23 / 30</b><span>implementation tickets closed on some branch (10 on master, 13 on reader-navigation)</span></div>
+    <div class="card stat"><b>3</b><span>more built on side branches, not merged (highlights, export, import)</span></div>
+    <div class="card stat"><b>4</b><span>still open: gutter icons, search operators, reader memory, import YES files</span></div>
+    <div class="card stat"><b>10</b><span>of 30 tickets on <code>master</code>. The rest wait on PRs #3, #5 and two unopened side branches</span></div>
+  </section>
+
+  <h2>Ticket progress (30 implementation tickets)</h2>
+  <div class="card">
+    <div class="bar" role="img" aria-label="10 on master, 13 on reader-navigation, 3 on side branches, 4 open">
+      <i style="width:33.3%;background:var(--master)" title="On master: 10"></i>
+      <i style="width:43.3%;background:var(--nav)" title="On feat/reader-navigation: 13"></i>
+      <i style="width:10%;background:var(--side)" title="Side branches, unmerged: 3"></i>
+      <i style="width:13.3%;background:var(--open)" title="Open: 4"></i>
+    </div>
+    <div class="legend">
+      <span style="--c:var(--master)">On master (10)</span>
+      <span style="--c:var(--nav)">On feat/reader-navigation, PR #5 draft (13)</span>
+      <span style="--c:var(--side)">Side branches, unmerged (3)</span>
+      <span style="--c:var(--open)">Open (4)</span>
+    </div>
+    <p style="color:var(--mute);font-size:13px;margin:12px 0 0">Excluded: yes-parser 02 (YES1 reader), deferred by decision. Half-built gutter icons and search operators exist only as patches in a session scratchpad, so they count as open.</p>
+  </div>
+
+  <h2>Roadmap by phase</h2>
+
+  <div class="card phase" style="--c:var(--nav)">
+    <header><h3>Phase 1: YES engine, Version API, markup, ARI, import</h3><span class="tag">mostly done</span></header>
+    <p>YES2 reader/writer, <code>openYes()</code>, verse markup and pericopes, footnotes and xrefs, native verification are on master. Importing YES files is the remaining gap.</p>
+    <div class="chips">
+      <span class="chip" style="--c:var(--master)">01 xrefs + footnotes</span>
+      <span class="chip" style="--c:var(--defer)">02 YES1 reader (deferred)</span>
+      <span class="chip" style="--c:var(--master)">03 YES2 writer</span>
+      <span class="chip" style="--c:var(--master)">04 openYes entry</span>
+      <span class="chip" style="--c:var(--open)">05 reader memory + UTF-8</span>
+      <span class="chip" style="--c:var(--master)">06 render markup + pericopes</span>
+      <span class="chip" style="--c:var(--open)">07 import YES files</span>
+      <span class="chip" style="--c:var(--master)">08 native verification + tsc</span>
+    </div>
+  </div>
+
+  <div class="card phase" style="--c:var(--side)">
+    <header><h3>Phase 2: Markers, Labels, export / import</h3><span class="tag">mostly built, partly unmerged</span></header>
+    <p>Repository, bookmarks, notes, hub and list are on master. Highlights, export and import are finished on separate branches. Progress marks and History are deferred by decision and not specified.</p>
+    <div class="chips">
+      <span class="chip" style="--c:var(--master)">01 user-data repository</span>
+      <span class="chip" style="--c:var(--master)">02 bookmark a verse</span>
+      <span class="chip" style="--c:var(--master)">03 notes</span>
+      <span class="chip" style="--c:var(--side)">04 highlights (feat/highlights)</span>
+      <span class="chip" style="--c:var(--wip)">05 gutter icons (WIP patch only)</span>
+      <span class="chip" style="--c:var(--master)">06 hub + list</span>
+      <span class="chip" style="--c:var(--side)">07 export (feat/markers-export-import)</span>
+      <span class="chip" style="--c:var(--side)">08 import (feat/markers-export-import)</span>
+      <span class="chip" style="--c:var(--park)">Progress marks + History (unspecified)</span>
+    </div>
+  </div>
+
+  <div class="card phase" style="--c:var(--side)">
+    <header><h3>Phase 3: Search</h3><span class="tag">done except operators</span></header>
+    <p>Search screen, markup-stripped matching and a per-Version cache are on master; scope chips, recents and context snippets are on reader-navigation.</p>
+    <div class="chips">
+      <span class="chip" style="--c:var(--master)">09 search screen</span>
+      <span class="chip" style="--c:var(--wip)">10 operators (WIP patch only)</span>
+      <span class="chip" style="--c:var(--nav)">scope chips, history, snippets</span>
+    </div>
+  </div>
+
+  <div class="card phase" style="--c:var(--nav)">
+    <header><h3>Extra: reader UI parity and navigation</h3><span class="tag">done on branch, PR #5 draft</span></header>
+    <p>13 tickets, all closed on <code>feat/reader-navigation</code> (stacked on PR #3, the CI release workflow). 227 tests passed at last measurement there.</p>
+    <div class="chips">
+      <span class="chip" style="--c:var(--nav)">01 prev / next chapter</span>
+      <span class="chip" style="--c:var(--nav)">02 resume last read</span>
+      <span class="chip" style="--c:var(--nav)">03 book/chapter/verse sheet</span>
+      <span class="chip" style="--c:var(--nav)">04 type a reference</span>
+      <span class="chip" style="--c:var(--nav)">05 recents + back chip</span>
+      <span class="chip" style="--c:var(--nav)">06 copy + share</span>
+      <span class="chip" style="--c:var(--nav)">07 reading appearance</span>
+      <span class="chip" style="--c:var(--nav)">08 footnote/xref popups</span>
+      <span class="chip" style="--c:var(--nav)">09 search scope + history</span>
+      <span class="chip" style="--c:var(--nav)">10 swipe + sticky header</span>
+      <span class="chip" style="--c:var(--nav)">11 drawer shell</span>
+      <span class="chip" style="--c:var(--nav)">12 settings screen</span>
+      <span class="chip" style="--c:var(--nav)">13 marker list sort / select</span>
+    </div>
+  </div>
+
+  <div class="card phase" style="--c:var(--wip)">
+    <header><h3>Versions cluster: import, list, switch, remove, compare</h3><span class="tag">design in progress, no code</span></header>
+    <p>Largest remaining phase 1 gap. Native only; web import is a separate effort. A throwaway prototype (<code>app/prototype-versions.tsx</code>, 3 variants) is uncommitted. Decisions live in <code>.scratch/androidbible-versions/</code>.</p>
+    <div class="chips">
+      <span class="chip" style="--c:var(--master)">01 storage of imported files</span>
+      <span class="chip" style="--c:var(--master)">02 picker + download</span>
+      <span class="chip" style="--c:var(--master)">03 Upstream registry</span>
+      <span class="chip" style="--c:var(--master)">04 registry model</span>
+      <span class="chip" style="--c:var(--master)">05 import flow + failures</span>
+      <span class="chip" style="--c:var(--wip)">06 Versions UI (claimed, pick A/B/C)</span>
+      <span class="chip" style="--c:var(--master)">07 compare behaviour</span>
+      <span class="chip" style="--c:var(--wip)">08 differing book sets (claimed)</span>
+    </div>
+    <p style="margin-top:10px">Colour here means decision resolved (green) or claimed and unresolved (orange). All eight decision files sit on reader-navigation or in research branches, none on master.</p>
+  </div>
+
+  <div class="card phase" style="--c:var(--open)">
+    <header><h3>Phases 4 and 5, tracking, parked</h3><span class="tag">not started</span></header>
+    <div class="chips">
+      <span class="chip" style="--c:var(--todo)">Phase 4: reading plans</span>
+      <span class="chip" style="--c:var(--todo)">Phase 4: songs</span>
+      <span class="chip" style="--c:var(--todo)">Phase 4: audio</span>
+      <span class="chip" style="--c:var(--todo)">Phase 5: iOS widget</span>
+      <span class="chip" style="--c:var(--todo)">Phase 5: notifications</span>
+      <span class="chip" style="--c:var(--todo)">Phase 5: volume-key paging</span>
+      <span class="chip" style="--c:var(--todo)">Parity matrix (<code>docs/parity-matrix.md</code> missing)</span>
+      <span class="chip" style="--c:var(--todo)">Drift job vs Upstream</span>
+      <span class="chip" style="--c:var(--park)">Online features (parked)</span>
+      <span class="chip" style="--c:var(--todo)">Deferred: compare, split view, floater, plans</span>
+    </div>
+  </div>
+
+  <h2>Where each piece lives</h2>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>Branch / worktree</th><th>Ahead of master</th><th>Holds</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td><code>master</code> 5240003</td><td>-</td><td>Phase 1 engine, user-data repo, search, bookmarks, notes, hub (PR #1, #2)</td><td>10 tickets</td></tr>
+        <tr><td><code>feat/release-workflow</code></td><td>3</td><td>CI for web, Android, unsigned iOS; reader parity roadmap. PR #3 draft</td><td>unmerged</td></tr>
+        <tr><td><code>feat/reader-navigation</code> (current)</td><td>20</td><td>Everything in the Extra phase, Versions design notes. PR #5 draft, stacked on #3</td><td>unmerged, 86 files</td></tr>
+        <tr><td><code>feat/highlights</code> (worktree acc65…)</td><td>20</td><td>Highlights, 12 presets + hex picker. Based on reader-navigation, but a divergent rebase, so not an ancestor</td><td>pushed, no PR known</td></tr>
+        <tr><td><code>feat/markers-export-import</code> (worktree af678…)</td><td>21</td><td>Export + import of Markers and Labels, adds document-picker and sharing</td><td>pushed, no PR known</td></tr>
+        <tr><td><code>research/upstream-versions</code>, <code>versions-storage</code>, <code>versions-picker</code></td><td>1 each</td><td>Research docs feeding Versions decisions 01 to 03</td><td>unmerged</td></tr>
+        <tr><td><code>research/upstream-markers-labels</code>, <code>export-format</code>, <code>search</code></td><td>old base</td><td>Research behind phase 2 and 3 requirements</td><td>worktrees still present</td></tr>
+        <tr><td><code>feat/search-screen</code></td><td>16 ahead, 2 behind</td><td>Earlier search work, largely represented on master via #1</td><td>not audited</td></tr>
+        <tr><td><code>feat/user-data-repository</code>, <code>feat/yes-parser-phase1</code></td><td>0</td><td>Fully contained in master</td><td>can be deleted</td></tr>
+        <tr><td>Uncommitted in main checkout</td><td>-</td><td><code>web.output: single</code>, drawer entry, <code>prototype-versions.tsx</code>, <code>error-logs/</code></td><td>local only</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Recommended path to Parity</h2>
+  <div class="card path">
+    <div class="step"><div class="n">1</div><div><b>Land what exists</b><span>Merge #3, then #5, then highlights and export/import. Master lacks 20 commits of reader work today.</span></div></div>
+    <div class="step"><div class="n">2</div><div><b>Finish phases 2 and 3</b><span>Gutter icons (05) and search operators (10), restarted on the new base. The old patches are reference only.</span></div></div>
+    <div class="step"><div class="n">3</div><div><b>Versions</b><span>Pick UI variant A, B or C, settle decision 08, then yes-parser 07 (import) and 05 (reader memory for large files).</span></div></div>
+    <div class="step"><div class="n">4</div><div><b>Create the Parity matrix and drift job</b><span>Status lines in tickets are stale (closed tickets still say <code>ready-for-agent</code>), so progress is only readable from <code>Closed:</code> dates.</span></div></div>
+    <div class="step"><div class="n">5</div><div><b>Progress marks and History</b><span>Deferred out of the first cut; needs requirements first.</span></div></div>
+    <div class="step"><div class="n">6</div><div><b>Phases 4 and 5</b><span>Plans, songs, audio, widget, notifications, volume keys. Unticketed and the largest unscoped chunk.</span></div></div>
+  </div>
+
+  <h2>Risks and open questions</h2>
+  <div class="card">
+    <ul class="risk">
+      <li><b>Stacked unmerged PRs.</b> Nothing from #3 or #5 reaches master until both land in order.</li>
+      <li><b>Web persistence unproven.</b> <code>expo-sqlite</code> on web is alpha; contract tests run on <code>sql.js</code> only (ADR 0003). The uncommitted <code>web.output: single</code> change trades static routes for a working dev server and needs a host fallback.</li>
+      <li><b>No device pass recorded</b> for the reader parity work; jest coverage only.</li>
+      <li><b>Licensing.</b> Bundled KJV provenance is unverified; terms for Upstream's hosted server are unconfirmed, which is why Online features stay parked.</li>
+      <li><b>Overall estimate.</b> Phases 1 to 3 roughly 80 percent; whole migration well under half, because phases 4 and 5 are large and unscoped. This is a judgment from the progress log, not a measurement.</li>
+    </ul>
+  </div>
+
+  <footer>Test counts and PR numbers (#3, #5) come from the 2026-10-09 progress log and were not re-measured or re-checked on GitHub for this page. Branch ahead/behind counts were read from local git.</footer>
+</main>
+</body>
+</html>
