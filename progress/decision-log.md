@@ -32,3 +32,28 @@ Newest entries go at the bottom. Each entry names the commit that holds the chan
 - A damaged compressed block is found when it is read, not at open. Checking every block at open would mean unpacking the whole text, which is what this change removes.
 - 4-byte UTF-8 characters (emoji) now decode correctly. The Android reader gets them wrong, so this is a deliberate departure. The writer still refuses characters outside the BMP, as upstream does.
 - Evidence: commit with `SectionBytes.ts`, `Yes2Hardening.test.ts`. 286 tests pass.
+
+**Decision 8. Versions: store imports in the user-data database.** The installed list is a table with one row per Version. The bundled KJV is seeded as `internal` and cannot be removed. Imported files are named `file/<name>`, so the id survives a move of the app's container.
+- A file is checked by opening it once before it is saved. Anything that fails leaves nothing behind.
+- Duplicates are refused before any copy or download.
+- Evidence: commit `1ab88ce`, `src/services/versions/__tests__/importVersion.test.ts` (16 tests).
+
+**Decision 9. Versions UI: prototype variant A.** The three prototype screens were read side by side. I chose A: a Version chip in the reader header opens a sheet to switch, and the drawer gets a Versions screen for import and removal. This was a reading of the variants, not a user test.
+- Evidence: commit `c21fd22`, `.scratch/androidbible-versions/decisions/06-versions-ui.md`.
+
+**Decision 10. Switching Versions keeps the place where it can.** When the new Version has the open book, the reader stays there. If not, it goes to the next book in Bible order that the new Version has, at chapter 1. The Back chip is cleared, since its place may not exist in the new Version. Markers stay saved even when their book is missing from the open Version.
+- Evidence: `placeInVersion` in `src/store/useBibleStore.ts`, `src/store/__tests__/placeInVersion.test.ts`.
+
+**Decision 11. Compare skips missing files.** It lists the open Version first, then the rest in list order. A Version without the verse shows "Not available in this version." A Version whose file is gone is left out, as the chooser leaves it out.
+- Evidence: `src/services/versions/compareVerse.ts`, `src/__tests__/ReaderVersions.test.tsx`.
+
+**Decision 12. Search operators follow Upstream's documented rules.** Upstream's rules were read from `docs/research/upstream-search.md` and followed as written. `+word` and a single quoted word match whole words. A quoted phrase matches consecutive whole words, and punctuation between them is allowed. A bare word still matches anywhere, as before.
+- What is not checked: the ticket asks for the same results as Upstream on a recorded sample. Upstream was not run here, so that checkbox is open. The tests cover the documented rules instead.
+- Evidence: `src/services/search/search.ts`, `src/services/search/__tests__/searchOperators.test.ts` (21 tests).
+
+**Decision 13. Gutter icons open the existing editors.** A bookmark icon and a note icon sit at the start of the verse where the Marker starts. Tapping one opens that Marker's dialog. The dialogs now take their verses from an explicit target instead of the current selection, so an icon tap does not need a selection first. Saving or deleting a Marker reloads the icons.
+- Evidence: `app/reader.tsx`, `src/__tests__/GutterIcons.test.tsx` (4 tests).
+
+**Decision 14. Maestro flows cover what a script can reach.** The Maestro CLI came from its official Homebrew tap (`mobile-dev-inc/tap/maestro`, 2.11.0). The Homebrew `maestro` cask is a different product and was not used. The flows live in `.maestro/`. Picking a file in the system picker is not automated, so the import success path is covered by Jest tests only.
+
+**Note on tests.** Under load, `MarkersScreens`, `SearchScreen` and `VersionsScreen` sometimes fail in the full run, while passing alone. The cause is the iOS build saturating the CPU. `VersionsScreen` now waits up to five seconds. The other two are pre-existing timing-sensitive tests and pass when run on their own.
