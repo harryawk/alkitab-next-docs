@@ -66,3 +66,16 @@ Newest entries go at the bottom. Each entry names the commit that holds the chan
 - Full Jest suite on an idle machine: 336 tests pass, type check clean.
 
 **Build note.** The Release build exits with status 1 after it installs and opens the app. The cause is an osascript call that checks for the Simulator window, which fails here. The app is installed and runs, so this does not block testing.
+
+**Decision 17. Scope of "still open" for this run.** An issue counts as open when its `Status:` line is not `closed` or `deferred` and it has unchecked acceptance boxes. `yes-parser/02` is deferred by the user and is left alone. Most open tickets were already implemented before this run (see the Comments under each). What is still open is device verification (iOS, Android, phone timing) and two checks that need Upstream's own code or output: `markers-export-search/10` (search sample) and `markers-export-search/07` (importer acceptance of a `mabel`-only file). Neither can run in this repo, so they stay open with a comment.
+- Evidence: `grep` of `Status:` lines and `- [ ]` boxes under `.scratch/`. Full Jest run before the change: 336 tests, one run with 5 failures in 4 suites, all timing-related under load.
+
+**Decision 18. Speed up verse decoding, the cost behind every chapter read and the search index.** `decodeVerse` built each verse by concatenating one character at a time. It now writes UTF-16 code units into a `Uint16Array` and makes one string per verse, in chunks of 8192 units. Output is unchanged, including 4-byte UTF-8 as surrogate pairs.
+- Alternatives considered: `TextDecoder` for the UTF-8 branch. Not used, because the existing decoder already handles the reader's cases and Hermes support for `TextDecoder` was not checked here. Snappy was not the cost: decoding all 131 text blocks takes about 44 ms warm.
+- Measured in Jest (node) on the bundled `kjv.yes`: warm full-Bible chapter pass 800 ms to 225 ms. Index build for search fell with it. A phone measurement is still needed.
+- Evidence: `src/services/yes2/Yes2Reader.ts`, new test in `src/services/yes2/__tests__/Yes2Hardening.test.ts` (20,000-character verse). `yes2` and `search` suites pass (81 tests), `tsc` clean.
+
+**Decision 19. Leave the timing-sensitive tests as they are.** `VersionsScreen`, `MarkersScreens` and `SearchScreen` failed in some full runs under load and passed alone. Changing their timeouts now would hide the cause without evidence. A later full run passed 336 of 336.
+- Not fixed: the cause is not yet shown. The next step is to run the full suite a few times on an idle machine and record which waits fail.
+
+**Decision 20. Changes stay uncommitted.** The working tree also has an unrelated `app.json` change from before this run, which was left untouched.
