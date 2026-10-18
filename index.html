@@ -126,6 +126,7 @@
     }
     .gallery .shot.wide { grid-column: 1 / -1; }
 
+    .proof-head { margin: 3rem 0 1.25rem; font-size: 1.5rem; }
     .clips { margin-top: 2rem; }
     .clips h3 { margin-bottom: 0.5rem; }
     .clips ul { margin: 0; padding-left: 1.25rem; }
@@ -168,8 +169,8 @@
         <a class="cta" href="progress/decision-log.md">Read the decision log</a>
       </div>
       <figure class="shot rise late">
-        <img src="proof/issue-37/1-reader-genesis-1.png" alt="The reader open on Genesis chapter 1" width="1280" height="800">
-        <figcaption>The reader on Genesis 1, from the chapter-paging work.</figcaption>
+        <img src="proof/versions-ui-redesign/chooser-dark.png" alt="The reader on Genesis 1 in dark mode, with the Version chooser open" width="780" height="1688">
+        <figcaption>The reader in dark mode, with the Version chooser open.</figcaption>
       </figure>
     </div>
   </main>
@@ -241,6 +242,7 @@
     <div class="wrap">
       <h2>Proof</h2>
       <p class="lede" style="margin-bottom:2.5rem">Screens and recordings from the running app, grouped by issue where the file says so.</p>
+      <h3 class="proof-head">Versions, restyled</h3>
       <div class="gallery">
         <figure class="shot">
           <img src="proof/versions-ui-redesign/after-light.png" alt="The Versions screen in light mode, with Import and Installed cards" width="1280" height="800" loading="lazy">
@@ -254,17 +256,37 @@
           <img src="proof/versions-ui-redesign/chooser-light.png" alt="The version chooser sheet listing the installed Versions" width="1280" height="800" loading="lazy">
           <figcaption>The version chooser sheet, opened from the reader header.</figcaption>
         </figure>
+      </div>
+
+      <h3 class="proof-head">Reader</h3>
+      <div class="gallery">
         <figure class="shot">
-          <img src="progress/screenshots/compare-verse.png" alt="A verse compared across Versions" width="1280" height="800" loading="lazy">
-          <figcaption>One verse compared across Versions.</figcaption>
+          <img src="proof/issue-37/2-after-next-chapter.png" alt="The reader on Genesis 2 after moving to the next chapter" loading="lazy">
+          <figcaption>Moved to the next chapter, Genesis 2 (issue 37).</figcaption>
         </figure>
         <figure class="shot">
-          <img src="proof/issue-40/2-file-listed.png" alt="An imported Bible file listed in the Versions screen" width="1280" height="800" loading="lazy">
+          <img src="proof/issue-14/reader-baseline.png" alt="The reader on Genesis 1 in the web baseline run" loading="lazy">
+          <figcaption>The reader in the web baseline run (issue 14).</figcaption>
+        </figure>
+      </div>
+
+      <h3 class="proof-head">Web import, before the restyle</h3>
+      <div class="gallery">
+        <figure class="shot">
+          <img src="proof/issue-40/1-invalid-file-refused.png" alt="An invalid file refused on the web Versions screen" loading="lazy">
+          <figcaption>An invalid file is refused (issue 40).</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="proof/issue-40/2-file-listed.png" alt="An imported Bible file listed in the Versions screen" loading="lazy">
           <figcaption>An imported file, listed after import (issue 40).</figcaption>
         </figure>
         <figure class="shot">
-          <img src="proof/issue-40/4-http-link-refused.png" alt="The app refusing a plain http link" width="1280" height="800" loading="lazy">
+          <img src="proof/issue-40/4-http-link-refused.png" alt="The app refusing a plain http link" loading="lazy">
           <figcaption>A plain http link is refused (issue 40).</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="proof/issue-41/2-after-reload.png" alt="An imported Version still listed after a page reload" loading="lazy">
+          <figcaption>An imported Version still listed after a reload (issue 41).</figcaption>
         </figure>
       </div>
       <div class="clips">
