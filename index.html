@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How the Bible reader was built</title>
+  <meta name="description" content="Decisions, research and progress for AlkitabNext, a Bible reader for iOS, Android and the web.">
+  <style>
+    :root {
+      --ground: #f4f5f2;
+      --field: #e6e9e4;
+      --ink: #16202a;
+      --muted: #4f5c66;
+      --accent: #0f5c5a;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--ground);
+      color: var(--ink);
+      font: 400 1.0625rem/1.6 var(--sans);
+    }
+
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+    .wrap { width: min(72rem, 100% - 2.5rem); margin-inline: auto; }
+
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-block: 1.25rem;
+    }
+    .bar strong { font-family: var(--serif); font-size: 1.125rem; font-weight: 700; }
+    .bar nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+    .bar nav a { color: var(--ink); }
+
+    .hero {
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+      padding-block: clamp(3rem, 8vw, 7rem) clamp(3rem, 7vw, 6rem);
+    }
+    @media (min-width: 60rem) {
+      .hero { grid-template-columns: 1fr 1.15fr; }
+    }
+
+    h1, h2, h3 {
+      font-family: var(--serif);
+      font-weight: 700;
+      line-height: 1.12;
+      margin: 0;
+    }
+    h1 { font-size: clamp(2.25rem, 5.5vw, 4rem); }
+    h2 { font-size: clamp(1.875rem, 4vw, 2.75rem); }
+    h3 { font-size: 1.25rem; }
+
+    .lede {
+      font-size: clamp(1.125rem, 2vw, 1.3125rem);
+      color: var(--muted);
+      max-width: 34rem;
+      margin: 1.5rem 0 0;
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 0.25rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .cta:hover { background: #0b4a48; }
+
+    .shot {
+      margin: 0;
+      background: var(--field);
+      padding: clamp(1rem, 3vw, 2rem);
+      border-radius: 0.25rem;
+    }
+    .shot img { display: block; width: 100%; height: auto; border-radius: 0.5rem; }
+    .shot figcaption { margin-top: 0.75rem; color: var(--muted); font-size: 0.9375rem; }
+
+    section { padding-block: clamp(3rem, 7vw, 6rem); }
+    section + section { border-top: 0; }
+    .field { background: var(--field); }
+
+    .split {
+      display: grid;
+      gap: 2.5rem;
+    }
+    @media (min-width: 60rem) {
+      .split { grid-template-columns: 1fr 2fr; gap: 4rem; }
+    }
+    .split > p { margin: 1rem 0 0; color: var(--muted); max-width: 30rem; }
+
+    ul.docs { list-style: none; margin: 0; padding: 0; }
+    ul.docs li { padding-block: 0.75rem; }
+    ul.docs li + li { border-top: 0; }
+    ul.docs a { font-weight: 600; }
+    ul.docs span { display: block; color: var(--muted); font-size: 0.9375rem; }
+    ul.docs code { font-size: 0.875em; }
+
+    .columns { display: grid; gap: 0.5rem 3rem; }
+    @media (min-width: 40rem) {
+      .columns { grid-template-columns: 1fr 1fr; }
+    }
+
+    .gallery {
+      display: grid;
+      gap: 2rem;
+    }
+    @media (min-width: 48rem) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+    .gallery .shot.wide { grid-column: 1 / -1; }
+
+    .clips { margin-top: 2rem; }
+    .clips h3 { margin-bottom: 0.5rem; }
+    .clips ul { margin: 0; padding-left: 1.25rem; }
+
+    footer { padding-block: 3rem 4rem; color: var(--muted); font-size: 0.9375rem; }
+    footer p { margin: 0; max-width: 46rem; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .rise {
+        animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+      .rise.late { animation-delay: 120ms; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: none; }
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="bar">
+      <strong>AlkitabNext docs</strong>
+      <nav aria-label="Sections">
+        <a href="#start">Start</a>
+        <a href="#decisions">Decisions</a>
+        <a href="#research">Research</a>
+        <a href="#proof">Proof</a>
+        <a href="#working">Working</a>
+      </nav>
+    </header>
+  </div>
+
+  <main>
+    <div class="wrap hero">
+      <div class="rise">
+        <h1>How the Bible reader was built</h1>
+        <p class="lede">The decisions, research and progress behind AlkitabNext, a Bible reader for iOS, Android and the web. It is a migration of Upstream, the Android app <code>yukuku/androidbible</code>, to Expo.</p>
+        <a class="cta" href="progress/decision-log.md">Read the decision log</a>
+      </div>
+      <figure class="shot rise late">
+        <img src="proof/issue-37/1-reader-genesis-1.png" alt="The reader open on Genesis chapter 1" width="1280" height="800">
+        <figcaption>The reader on Genesis 1, from the chapter-paging work.</figcaption>
+      </figure>
+    </div>
+  </main>
+
+  <section id="start" class="field">
+    <div class="wrap split">
+      <h2>Start here</h2>
+      <div>
+        <p>Start with these four: the progress log, the decision log, the parity matrix, and the roadmap as a page.</p>
+        <ul class="docs" style="margin-top:1.5rem">
+          <li><a href="progress/2026-10-09-migration-progress.md">Migration progress log, 2026-10-09</a><span>Where the migration stands, what changed, and where each change lives.</span></li>
+          <li><a href="progress/decision-log.md">Decision log</a><span>Each decision in the order it was made.</span></li>
+          <li><a href="parity-matrix.md">Parity matrix</a><span>One row per Upstream feature, with a column per platform.</span></li>
+          <li><a href="progress/migration-roadmap.html">Migration roadmap</a><span>The roadmap as a page.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <div class="wrap split">
+      <h2>Decisions</h2>
+      <div>
+        <p>Architecture decision records, one per decision, numbered in the order they were made.</p>
+        <ul class="docs" style="margin-top:1.5rem">
+          <li><a href="adr/0001-parity-with-upstream-develop.md">Full functional parity with upstream develop</a><span>ADR 0001</span></li>
+          <li><a href="adr/0002-ari-addressing.md">ARI is the only verse address</a><span>ADR 0002</span></li>
+          <li><a href="adr/0003-expo-sqlite-on-all-platforms.md">expo-sqlite on every platform, accepting alpha web support</a><span>ADR 0003</span></li>
+          <li><a href="adr/0004-web-version-bytes-in-indexeddb.md">Imported Version bytes on web live in IndexedDB</a><span>ADR 0004</span></li>
+          <li><a href="adr/0005-audio-package.md">expo-audio for chapter audio, streamed from the backend</a><span>ADR 0005</span></li>
+          <li><a href="adr/0006-daily-reminders.md">Daily reminders use expo-notifications on iOS and Android, and the Notification API on web</a><span>ADR 0006</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="research" class="field">
+    <div class="wrap">
+      <h2>Research</h2>
+      <p class="lede" style="margin-bottom:2rem">Notes on Upstream behaviour, file formats, and the platform questions the app had to answer.</p>
+      <div class="columns">
+        <ul class="docs">
+          <li><a href="research/androidbible-ui-parity.md">Upstream UI and navigation against this app</a></li>
+          <li><a href="research/androidbible-widget.md">Upstream home-screen widget</a></li>
+          <li><a href="research/ios-home-widget.md">iOS home-screen widget for a chosen verse</a></li>
+          <li><a href="research/upstream-audio.md">Upstream audio: where it is offered, how it is fetched, and its terms</a></li>
+          <li><a href="research/upstream-export-format.md">Upstream user-data export and import format</a></li>
+          <li><a href="research/upstream-markers-labels.md">Upstream Markers and Labels</a></li>
+          <li><a href="research/upstream-reading-plans.md">Upstream reading plan data</a></li>
+          <li><a href="research/upstream-reminders.md">Upstream reminder behaviour</a></li>
+        </ul>
+        <ul class="docs">
+          <li><a href="research/upstream-search.md">How Upstream searches a Version</a></li>
+          <li><a href="research/upstream-songs.md">Upstream song content: bundled or fetched, and its licence</a></li>
+          <li><a href="research/upstream-version-registry.md">Upstream installed-Version registry and Versions screen</a></li>
+          <li><a href="research/yes-file-format.md">YES file format (YES1 and YES2)</a></li>
+          <li><a href="research/yes-xrefs-footnotes.md">YES2 xrefs and footnotes sections</a></li>
+          <li><a href="research/versions-imported-file-storage.md">Where an imported Bible file can live (SDK 57)</a></li>
+          <li><a href="research/versions-picker-and-download.md">Document picker and URL download in Expo SDK 57</a></li>
+          <li><a href="research/cross-platform-file-reader-stacks.md">Cross-platform reader stacks: what open-source readers use</a></li>
+          <li><a href="research/github-actions-release-limits.md">GitHub Actions release limits</a></li>
+          <li><a href="research/lighthouse-baseline.md">Lighthouse baseline for the web build</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="proof">
+    <div class="wrap">
+      <h2>Proof</h2>
+      <p class="lede" style="margin-bottom:2.5rem">Screens and recordings from the running app, grouped by issue where the file says so.</p>
+      <div class="gallery">
+        <figure class="shot">
+          <img src="progress/screenshots/versions-screen.png" alt="The Versions screen" width="1280" height="800" loading="lazy">
+          <figcaption>The Versions screen.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="progress/screenshots/compare-verse.png" alt="A verse compared across Versions" width="1280" height="800" loading="lazy">
+          <figcaption>One verse compared across Versions.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="proof/issue-40/2-file-listed.png" alt="An imported Bible file listed in the Versions screen" width="1280" height="800" loading="lazy">
+          <figcaption>An imported file, listed after import (issue 40).</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="proof/issue-40/4-http-link-refused.png" alt="The app refusing a plain http link" width="1280" height="800" loading="lazy">
+          <figcaption>A plain http link is refused (issue 40).</figcaption>
+        </figure>
+      </div>
+      <div class="clips">
+        <h3>Recordings</h3>
+        <ul>
+          <li><a href="proof/issue-37/chapter-paging-replacement.webm">Chapter paging (issue 37)</a></li>
+          <li><a href="proof/issue-40/web-import-file-and-link.webm">Web import, file and link (issue 40)</a></li>
+          <li><a href="proof/issue-41/web-version-bytes-survive-reload.webm">Imported bytes survive a reload (issue 41)</a></li>
+          <li><a href="proof/issue-23/web-versions-import-section.webm">Versions import section (issue 23)</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="working" class="field">
+    <div class="wrap split">
+      <h2>Working</h2>
+      <div>
+        <p>How the work is organised: the ideation that started the migration, and the conventions the agents follow.</p>
+        <ul class="docs" style="margin-top:1.5rem">
+          <li><a href="ideation/2026-10-02-androidbible-migration.md">Ideation: migrate androidbible to Expo (iOS, Android, web)</a><span>Dated 2 October 2026.</span></li>
+          <li><a href="agents/domain.md">Domain docs</a></li>
+          <li><a href="agents/issue-tracker.md">Issue tracker: local Markdown</a></li>
+          <li><a href="agents/triage-labels.md">Triage labels</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>A public copy of the <code>docs/</code> folder from the private AlkitabNext repository, as of 18 October 2026. Changes in the private repository reach this site only when the folder is copied again.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
