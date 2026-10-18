@@ -144,15 +144,15 @@
   </div>
 
   <div class="card phase" style="--c:var(--wip)">
-    <header><h3>Versions cluster: import, list, switch, remove, compare</h3><span class="tag">design in progress, no code</span></header>
-    <p>Largest remaining phase 1 gap. Native only; web import is a separate effort. A throwaway prototype (<code>app/prototype-versions.tsx</code>, 3 variants) is uncommitted. Decisions live in <code>.scratch/androidbible-versions/</code>.</p>
+    <header><h3>Versions cluster: import, list, switch, remove, compare</h3><span class="tag">variant A chosen, UI restyled (PR 63)</span></header>
+    <p>Import from file or link works on native and web (PR 45). Variant A was chosen in decision 9 of the decision log, and the screen was restyled in PR 63 (decision 21). Decisions live in <code>.scratch/androidbible-versions/</code>.</p>
     <div class="chips">
       <span class="chip" style="--c:var(--master)">01 storage of imported files</span>
       <span class="chip" style="--c:var(--master)">02 picker + download</span>
       <span class="chip" style="--c:var(--master)">03 Upstream registry</span>
       <span class="chip" style="--c:var(--master)">04 registry model</span>
       <span class="chip" style="--c:var(--master)">05 import flow + failures</span>
-      <span class="chip" style="--c:var(--wip)">06 Versions UI (claimed, pick A/B/C)</span>
+      <span class="chip" style="--c:var(--master)">06 Versions UI (variant A, restyled)</span>
       <span class="chip" style="--c:var(--master)">07 compare behaviour</span>
       <span class="chip" style="--c:var(--wip)">08 differing book sets (claimed)</span>
     </div>
@@ -198,7 +198,7 @@
   <div class="card path">
     <div class="step"><div class="n">1</div><div><b>Land what exists</b><span>Merge #3, then #5, then highlights and export/import. Master lacks 20 commits of reader work today.</span></div></div>
     <div class="step"><div class="n">2</div><div><b>Finish phases 2 and 3</b><span>Gutter icons (05) and search operators (10), restarted on the new base. The old patches are reference only.</span></div></div>
-    <div class="step"><div class="n">3</div><div><b>Versions</b><span>Pick UI variant A, B or C, settle decision 08, then yes-parser 07 (import) and 05 (reader memory for large files).</span></div></div>
+    <div class="step"><div class="n">3</div><div><b>Versions</b><span>Variant A is chosen, so settle decision 08, then yes-parser 07 (import) and 05 (reader memory for large files).</span></div></div>
     <div class="step"><div class="n">4</div><div><b>Create the Parity matrix and drift job</b><span>Status lines in tickets are stale (closed tickets still say <code>ready-for-agent</code>), so progress is only readable from <code>Closed:</code> dates.</span></div></div>
     <div class="step"><div class="n">5</div><div><b>Progress marks and History</b><span>Deferred out of the first cut; needs requirements first.</span></div></div>
     <div class="step"><div class="n">6</div><div><b>Phases 4 and 5</b><span>Plans, songs, audio, widget, notifications, volume keys. Unticketed and the largest unscoped chunk.</span></div></div>

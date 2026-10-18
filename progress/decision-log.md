@@ -79,3 +79,11 @@ Newest entries go at the bottom. Each entry names the commit that holds the chan
 - Not fixed: the cause is not yet shown. The next step is to run the full suite a few times on an idle machine and record which waits fail.
 
 **Decision 20. Changes stay uncommitted.** The working tree also has an unrelated `app.json` change from before this run, which was left untouched.
+
+## 2026-10-18 Versions screen restyle
+
+**Decision 21. Restyle the Versions screen and the chooser sheet.** The Import actions were bare grey pills in a plain white box, and the installed list had no structure. The screen now has an Import card (file, then link) and an Installed card. Each row has one trailing action. The chooser sheet uses the same rows and the theme background, so dark mode no longer shows a white sheet. This keeps decision 9, variant A. It changes how the screen looks, not where things live.
+- Evidence: alkitab-next PR 63 (https://github.com/harryawk/alkitab-next/pull/63), commit `541b27b`. Files: `app/versions.tsx`, `src/components/VersionChooser.tsx`. Every label and accessibility label the tests and Maestro flows use is unchanged. `VersionsScreen`, `ReaderVersions` and `SettingsScreen` pass (9 tests), and `tsc` reports no errors in the changed files.
+- Screenshots and recordings come from the Expo web build in headless Chrome at 390 by 844 pixels. They are not from the simulator or a device. The Maestro flows were not run on this change.
+- Not checked: how the screen looks on a phone, and whether the Maestro flows pass. Both need a run on the simulator or a device.
+- Proof is in `proof/versions-ui-redesign/`.
